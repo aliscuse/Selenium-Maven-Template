@@ -9,7 +9,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.lazerycode.selenium.config.DriverType.FIREFOX;
+import static com.lazerycode.selenium.config.DriverType.CHROME;
 import static com.lazerycode.selenium.config.DriverType.valueOf;
 import static org.openqa.selenium.Proxy.ProxyType.MANUAL;
 
@@ -18,8 +18,8 @@ public class DriverFactory {
     private WebDriver webdriver;
     private DriverType selectedDriverType;
 
-    private final DriverType defaultDriverType = FIREFOX;
-    private final String browser = System.getProperty("browser", defaultDriverType.toString()).toUpperCase();
+    private final DriverType defaultDriverType = CHROME;
+    public String browser = System.getProperty("browser", defaultDriverType.toString()).toUpperCase();
     private final String operatingSystem = System.getProperty("os.name").toUpperCase();
     private final String systemArchitecture = System.getProperty("os.arch");
     private final boolean useRemoteWebDriver = Boolean.getBoolean("remoteDriver");

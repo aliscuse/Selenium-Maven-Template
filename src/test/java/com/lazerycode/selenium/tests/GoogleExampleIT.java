@@ -1,86 +1,119 @@
 package com.lazerycode.selenium.tests;
 
 import com.lazerycode.selenium.DriverBase;
-import org.openqa.selenium.By;
+import com.lazerycode.selenium.config.YamlConfigRunner;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 public class GoogleExampleIT extends DriverBase {
 
-    @Test
-    public void googleCheeseExample() throws Exception {
-        // Create a new WebDriver instance
-        // Notice that the remainder of the code relies on the interface,
-        // not the implementation.
-        WebDriver driver = getDriver();
-
-        // And now use this to visit Google
-        driver.get("http://www.google.com");
-        // Alternatively the same thing can be done like this
-        // driver.navigate().to("http://www.google.com");
-
-        // Find the text input element by its name
-        WebElement element = driver.findElement(By.name("q"));
-
-        // Enter something to search for
-        element.clear();
-        element.sendKeys("Cheese!");
-
-        // Now submit the form. WebDriver will find the form for us from the element
-        element.submit();
-
-        // Check the title of the page
-        System.out.println("Page title is: " + driver.getTitle());
-
-        // Google's search is rendered dynamically with JavaScript.
-        // Wait for the page to load, timeout after 10 seconds
-        (new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().toLowerCase().startsWith("cheese!");
-            }
-        });
-
-        // Should see: "cheese! - Google Search"
-        System.out.println("Page title is: " + driver.getTitle());
+    public static String getDomainName(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        String domain = uri.getHost();
+        return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
     @Test
-    public void googleMilkExample() throws Exception {
-        // Create a new WebDriver instance
-        // Notice that the remainder of the code relies on the interface,
-        // not the implementation.
-        WebDriver driver = getDriver();
+    @Parameters("YAML")
+    public void execise1(String YAML) throws Exception {
+        Properties properties = new Properties();
+        File file = new File("config.properties");
+        FileOutputStream fileOut = new FileOutputStream(file);
+        String title;
+        URL obj = new URL("https://jsonplaceholder.typicode.com/posts");
 
-        // And now use this to visit Google
-        driver.get("http://www.google.com");
-        // Alternatively the same thing can be done like this
-        // driver.navigate().to("http://www.google.com");
 
-        // Find the text input element by its name
-        WebElement element = driver.findElement(By.name("q"));
+        List lista = YamlConfigRunner.main(YAML);
 
-        // Enter something to search for
-        element.clear();
-        element.sendKeys("Milk!");
+        Element my = new Element();
 
-        // Now submit the form. WebDriver will find the form for us from the element
-        element.submit();
+        for (int i = 0; i < lista.size(); i++){
+            Map<String, Element> myElem = (Map<String, Element>) lista.get(i);
 
-        // Check the title of the page
-        System.out.println("Page title is: " + driver.getTitle());
-
-        // Google's search is rendered dynamically with JavaScript.
-        // Wait for the page to load, timeout after 10 seconds
-        (new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().toLowerCase().startsWith("milk!");
+            Map<String, String> mapa = (Map<String, String>) myElem.values().iterator().next();
+            for (int j = 0; j < mapa.size(); j++){
+                my.browser = mapa.get("browser");
+                my.url = mapa.get("url");
+                my.method = mapa.get("method");
             }
-        });
 
-        // Should see: "cheese! - Google Search"
-        System.out.println("Page title is: " + driver.getTitle());
+            System.setProperty("browser", my.browser);
+            WebDriver driver = getDriver();
+
+            driver.get(my.url);
+            title = driver.getTitle();
+            System.out.println("Page title is: " + title);
+
+            properties.setProperty("given_Url", my.url);
+            properties.setProperty("web_domain", getDomainName(my.url));
+            properties.setProperty("title", title);
+
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("POST");
+            if (my.method.toUpperCase().equals("GET")) {
+                con.setRequestMethod("GET");
+                int responseCode = con.getResponseCode();
+                System.out.println("\nSending 'GET' request to URL : " + obj.toString());
+                System.out.println("Response Code : " + responseCode);
+
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                //print result
+                System.out.println(response.toString());
+            } else {
+                String urlParameters = "{\"url\": \""+my.url+"\",\"title\" : \""+title+"\"}";
+
+                con.setDoOutput(true);
+                DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+                wr.writeBytes(urlParameters);
+                wr.flush();
+                wr.close();
+
+                int responseCode = con.getResponseCode();
+                System.out.println("\nSending 'POST' request to URL : " + obj.toString());
+                System.out.println("Post parameters : " + urlParameters);
+                System.out.println("Response Code : " + responseCode);
+
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                //print result
+                System.out.println(response.toString());
+            }
+
+            try {
+                fileOut = new FileOutputStream(file, true);
+                properties.store(fileOut, "Output element " + i);
+                fileOut.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

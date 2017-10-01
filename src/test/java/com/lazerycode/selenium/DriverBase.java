@@ -3,10 +3,7 @@ package com.lazerycode.selenium;
 import com.lazerycode.selenium.config.DriverFactory;
 import com.lazerycode.selenium.listeners.ScreenshotListener;
 import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Listeners;
+import org.testng.annotations.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,8 +15,8 @@ public class DriverBase {
     private static List<DriverFactory> webDriverThreadPool = Collections.synchronizedList(new ArrayList<DriverFactory>());
     private static ThreadLocal<DriverFactory> driverFactory;
 
-    @BeforeSuite(alwaysRun = true)
-    public static void instantiateDriverObject() {
+    @BeforeMethod(alwaysRun = true)
+    public static void instantiateSingleDriverObject() {
         driverFactory = new ThreadLocal<DriverFactory>() {
             @Override
             protected DriverFactory initialValue() {
