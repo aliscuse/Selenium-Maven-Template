@@ -1,8 +1,6 @@
 Selenium-Maven-Template
 =======================
 
-[![Join the chat at https://gitter.im/Ardesco/Selenium-Maven-Template](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Ardesco/Selenium-Maven-Template?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 A maven template for Selenium 3 that has the latest dependencies so that you can just check out and start writing tests in four easy steps.  If you like what you see have a look at my Selenium book [Mastering Selenium Webdriver](https://www.amazon.co.uk/Mastering-Selenium-WebDriver-Mark-Collin/dp/1784394351).
 
 
@@ -11,7 +9,7 @@ A maven template for Selenium 3 that has the latest dependencies so that you can
 3. `cd Selenium-Maven-Template` (Or whatever folder you cloned it into)
 4. `mvn clean verify`
 
-All dependencies should now be downloaded and the example google cheese test will have run successfully (Assuming you have Firefox installed in the default location)
+All dependencies should now be downloaded and the example exercise 1 test will have run successfully.
 
 ### What should I know?
 
@@ -73,3 +71,17 @@ You have probably got outdated driver binaries, by default they are not overwrit
 
 - `mvn clean verify -Doverwrite.binaries=true`
 - Delete the `selenium_standalone_binaries` folder in your resources directory
+
+### Executing exercises!!!
+
+There are two exercises that can be easily executed from the command line.
+
+## Exercise1
+
+As part of exercise 1, a yaml file it's used as input for testing. To run so, this variable has to be defined as environment variable:
+
+`mvn clean verify -DYAML=<PATH_TO_YAML_FILE>`
+
+There is an example yaml file. This example can be executed with:
+
+`mvn clean verify -DYAML=src/test/resources/schemas/data.yaml`
