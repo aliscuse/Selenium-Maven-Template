@@ -1,9 +1,12 @@
 package com.lazerycode.selenium.listeners;
 
+import com.lazerycode.selenium.tests.Exercise1IT;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.Augmenter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 
@@ -14,6 +17,8 @@ import java.io.IOException;
 import static com.lazerycode.selenium.DriverBase.getDriver;
 
 public class ScreenshotListener extends TestListenerAdapter {
+
+    private static final Logger logger = LoggerFactory.getLogger(Exercise1IT.class);
 
     private boolean createFile(File screenshot) {
         boolean fileCreated = false;
@@ -40,7 +45,7 @@ public class ScreenshotListener extends TestListenerAdapter {
             screenshotStream.write(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES));
             screenshotStream.close();
         } catch (IOException unableToWriteScreenshot) {
-            System.err.println("Unable to write " + screenshot.getAbsolutePath());
+            logger.error("Unable to write " + screenshot.getAbsolutePath());
             unableToWriteScreenshot.printStackTrace();
         }
     }
@@ -58,12 +63,12 @@ public class ScreenshotListener extends TestListenerAdapter {
                 } catch (ClassCastException weNeedToAugmentOurDriverObject) {
                     writeScreenshotToFile(new Augmenter().augment(driver), screenshot);
                 }
-                System.out.println("Written screenshot to " + screenshotAbsolutePath);
+                logger.info("Written screenshot to " + screenshotAbsolutePath);
             } else {
-                System.err.println("Unable to create " + screenshotAbsolutePath);
+                logger.error("Unable to create " + screenshotAbsolutePath);
             }
         } catch (Exception ex) {
-            System.err.println("Unable to capture screenshot...");
+            logger.error("Unable to capture screenshot...");
             ex.printStackTrace();
         }
     }

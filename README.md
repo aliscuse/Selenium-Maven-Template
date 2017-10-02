@@ -72,16 +72,20 @@ You have probably got outdated driver binaries, by default they are not overwrit
 - `mvn clean verify -Doverwrite.binaries=true`
 - Delete the `selenium_standalone_binaries` folder in your resources directory
 
-### Executing exercises!!!
+### Executing exercises
 
 There are two exercises that can be easily executed from the command line.
 
 ## Exercise1
 
-As part of exercise 1, a yaml file it's used as input for testing. To run so, this variable has to be defined as environment variable:
+As part of exercise 1, a yaml file it's used as input for testing (by default the test uses the example file located in [data.yaml](src/resources/schemas/data.yml)). To run so, the user can define this file as environment variable:
 
 `mvn clean verify -DYAML=<PATH_TO_YAML_FILE>`
 
-There is an example yaml file. This example can be executed with:
 
-`mvn clean verify -DYAML=src/test/resources/schemas/data.yaml`
+### Debugging
+
+The default log level is set to INFO. This level can be easily change by adding `-DlogLevel` variable. 
+Example:
+
+`mvn clean verify -DLogLevel=DEBUG`

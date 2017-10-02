@@ -3,6 +3,7 @@ package com.lazerycode.selenium.tests;
 import com.lazerycode.selenium.DriverBase;
 import com.lazerycode.selenium.config.YamlConfigRunner;
 import org.openqa.selenium.WebDriver;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -15,7 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-public class GoogleExampleIT extends DriverBase {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class Exercise1IT extends DriverBase {
+    private static final Logger logger = LoggerFactory.getLogger(Exercise1IT.class);
 
     public static String getDomainName(String url) throws URISyntaxException {
         URI uri = new URI(url);
@@ -25,13 +30,12 @@ public class GoogleExampleIT extends DriverBase {
 
     @Test
     @Parameters("YAML")
-    public void execise1(String YAML) throws Exception {
+    public void execise1(@Optional("src/test/resources/schemas/data.yaml") String YAML) throws Exception {
         Properties properties = new Properties();
         File file = new File("config.properties");
         FileOutputStream fileOut = new FileOutputStream(file);
         String title;
         URL obj = new URL("https://jsonplaceholder.typicode.com/posts");
-
 
         List lista = YamlConfigRunner.main(YAML);
 
@@ -52,7 +56,7 @@ public class GoogleExampleIT extends DriverBase {
 
             driver.get(my.url);
             title = driver.getTitle();
-            System.out.println("Page title is: " + title);
+            logger.info("\n\nPage title is: " + title);
 
             properties.setProperty("given_Url", my.url);
             properties.setProperty("web_domain", getDomainName(my.url));
@@ -60,12 +64,11 @@ public class GoogleExampleIT extends DriverBase {
 
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-            con.setRequestMethod("POST");
             if (my.method.toUpperCase().equals("GET")) {
                 con.setRequestMethod("GET");
                 int responseCode = con.getResponseCode();
-                System.out.println("\nSending 'GET' request to URL : " + obj.toString());
-                System.out.println("Response Code : " + responseCode);
+                logger.debug("Sending 'GET' request to URL : " + obj.toString());
+                logger.debug("Response Code : " + responseCode);
 
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(con.getInputStream()));
@@ -77,9 +80,9 @@ public class GoogleExampleIT extends DriverBase {
                 }
                 in.close();
 
-                //print result
-                System.out.println(response.toString());
+                logger.info(response.toString());
             } else {
+                con.setRequestMethod("POST");
                 String urlParameters = "{\"url\": \""+my.url+"\",\"title\" : \""+title+"\"}";
 
                 con.setDoOutput(true);
@@ -89,9 +92,9 @@ public class GoogleExampleIT extends DriverBase {
                 wr.close();
 
                 int responseCode = con.getResponseCode();
-                System.out.println("\nSending 'POST' request to URL : " + obj.toString());
-                System.out.println("Post parameters : " + urlParameters);
-                System.out.println("Response Code : " + responseCode);
+                logger.debug("\nSending 'POST' request to URL : " + obj.toString());
+                logger.debug("Post parameters : " + urlParameters);
+                logger.debug("Response Code : " + responseCode);
 
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(con.getInputStream()));
@@ -103,8 +106,7 @@ public class GoogleExampleIT extends DriverBase {
                 }
                 in.close();
 
-                //print result
-                System.out.println(response.toString());
+                logger.info(response.toString());
             }
 
             try {

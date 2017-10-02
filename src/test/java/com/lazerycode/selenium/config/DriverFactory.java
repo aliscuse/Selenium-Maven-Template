@@ -1,10 +1,13 @@
 package com.lazerycode.selenium.config;
 
+import com.lazerycode.selenium.tests.Exercise1IT;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,6 +30,9 @@ public class DriverFactory {
     private final String proxyHostname = System.getProperty("proxyHost");
     private final Integer proxyPort = Integer.getInteger("proxyPort");
     private final String proxyDetails = String.format("%s:%d", proxyHostname, proxyPort);
+
+    private static final Logger logger = LoggerFactory.getLogger(Exercise1IT.class);
+
 
     public WebDriver getDriver() throws Exception {
         if (null == webdriver) {
@@ -56,19 +62,20 @@ public class DriverFactory {
         try {
             driverType = valueOf(browser);
         } catch (IllegalArgumentException ignored) {
-            System.err.println("Unknown driver specified, defaulting to '" + driverType + "'...");
+            logger.error("Unknown driver specified, defaulting to '" + driverType + "'...");
         } catch (NullPointerException ignored) {
-            System.err.println("No driver specified, defaulting to '" + driverType + "'...");
+            logger.error("No driver specified, defaulting to '" + driverType + "'...");
         }
         selectedDriverType = driverType;
     }
 
     private void instantiateWebDriver(DesiredCapabilities desiredCapabilities) throws MalformedURLException {
-        System.out.println(" ");
-        System.out.println("Current Operating System: " + operatingSystem);
-        System.out.println("Current Architecture: " + systemArchitecture);
-        System.out.println("Current Browser Selection: " + selectedDriverType);
-        System.out.println(" ");
+
+        logger.debug("");
+        logger.debug("Current Operating System: " + operatingSystem);
+        logger.debug("Current Architecture: " + systemArchitecture);
+        logger.debug("Current Browser Selection: " + selectedDriverType);
+        logger.debug("");
 
         if (useRemoteWebDriver) {
             URL seleniumGridURL = new URL(System.getProperty("gridURL"));
