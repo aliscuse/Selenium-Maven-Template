@@ -78,7 +78,7 @@ There are two exercises that can be easily executed from the command line.
 
 ## Exercise1
 
-As part of exercise 1, a yaml file it's used as input for testing (by default the test uses the example file located in [data.yaml](src/test/resources/schemas/data.yaml)). To run so, the user can define this file as environment variable:
+As part of exercise 1, a yaml file it's used as input for testing (by default the test uses the example file located in [data.yaml](src/test/resources/schemas/data.yaml)). To run the test using a custom yaml file, an environment variable can be defined to do so:
 
 `mvn clean verify -DYAML=<PATH_TO_YAML_FILE>`
 
